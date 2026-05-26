@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>HireAI — Login</title>
+    <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+
+<!-- Navbar -->
+<nav class="navbar">
+    <a href="index.html" class="navbar-brand">Hire<span>AI</span></a>
+</nav>
+
+<!-- Auth Card -->
+<div class="section">
+    <div class="container-sm">
+        <div class="card">
+            <div class="card-body">
+
+                <h2 class="text-center mb-6">Welcome back</h2>
+
+                <!-- Tab switcher -->
+                <div class="tabs mb-6" style="width:100%; justify-content:center;">
+                    <button class="tab active" data-tab="login">Login</button>
+                    <button class="tab" data-tab="register">Register</button>
+                </div>
+
+                <!-- ── Login Form ── -->
+                <form id="login-form">
+                    <div id="login-alert" class="alert"></div>
+
+                    <div class="form-group">
+                        <label class="form-label">Username</label>
+                        <input id="login-username" type="text" class="form-control" placeholder="Enter username" required />
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Password</label>
+                        <input id="login-password" type="password" class="form-control" placeholder="Enter password" required />
+                    </div>
+
+                    <button
+                        id="login-btn"
+                        type="submit"
+                        class="btn btn-primary btn-full btn-lg mt-4"
+                        data-label="Login"
+                    >
+                        Login
+                    </button>
+                </form>
+
+                <!-- ── Register Form ── -->
+                <form id="register-form" style="display:none;">
+                    <div id="register-alert" class="alert"></div>
+
+                    <div class="grid-2">
+                        <div class="form-group">
+                            <label class="form-label">Username</label>
+                            <input id="reg-username" type="text" class="form-control" placeholder="Choose username" required />
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Email</label>
+                            <input id="reg-email" type="email" class="form-control" placeholder="you@email.com" required />
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Password</label>
+                        <input id="reg-password" type="password" class="form-control" placeholder="Min 8 characters" required />
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">I am a...</label>
+                        <select id="reg-role" class="form-control">
+                            <option value="candidate">Candidate — looking for jobs</option>
+                            <option value="recruiter">Recruiter — hiring talent</option>
+                        </select>
+                    </div>
+
+                    <!-- Only shown when role = recruiter -->
+                    <div class="form-group" id="company-group" style="display:none;">
+                        <label class="form-label">Company Name</label>
+                        <input id="reg-company" type="text" class="form-control" placeholder="Your company" />
+                    </div>
+
+                    <button
+                        id="register-btn"
+                        type="submit"
+                        class="btn btn-primary btn-full btn-lg mt-4"
+                        data-label="Create Account"
+                    >
+                        Create Account
+                    </button>
+                </form>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Scripts — api.js must load before auth.js -->
+<script src="js/api.js"></script>
+<script src="js/auth.js"></script>
+
+</body>
+</html>

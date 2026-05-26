@@ -68,6 +68,7 @@ MIDDLEWARE = [
 
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:3000",   # if you use a dev server later
+    "http://127.0.0.1:3000",  #live server uses this instead of localhost
     "http://127.0.0.1:5500",  # VS Code Live Server default port
     "http://localhost:5500",
 ]

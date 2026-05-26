@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>HireAI — Find Your Next Job</title>
+    <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+
+<!-- Navbar -->
+<nav class="navbar">
+    <a href="index.html" class="navbar-brand">Hire<span>AI</span></a>
+    <ul class="navbar-links">
+        <li><a href="index.html">Jobs</a></li>
+        <li id="nav-dashboard-link" style="display:none;">
+            <a href="#" id="nav-dashboard">Dashboard</a>
+        </li>
+        <li id="nav-login-link">
+            <a href="login.html" class="btn btn-primary btn-sm">Login</a>
+        </li>
+        <li id="nav-logout-link" style="display:none;">
+            <a href="#" id="nav-logout" class="btn btn-ghost btn-sm">Logout</a>
+        </li>
+    </ul>
+</nav>
+
+<!-- Hero -->
+<section class="hero">
+    <div class="container">
+        <h1>Find Jobs That <span style="color:var(--accent)">Match You</span></h1>
+        <p>AI-powered skill matching connects you to the right opportunities instantly.</p>
+        <div class="hero-search">
+            <input
+                id="search-input"
+                type="text"
+                placeholder="Search jobs, skills, companies..."
+            />
+            <button class="btn btn-primary" onclick="filterJobs()">Search</button>
+        </div>
+    </div>
+</section>
+
+<!-- Filters + Job Board -->
+<section class="section">
+    <div class="container">
+
+        <!-- Filter bar -->
+        <div class="flex items-center gap-3 mb-6 wrap">
+            <select id="filter-category" class="form-control" style="width:180px;" onchange="filterJobs()">
+                <option value="">All Categories</option>
+                <option value="engineering">Engineering</option>
+                <option value="design">Design</option>
+                <option value="marketing">Marketing</option>
+                <option value="ai_ml">AI / ML</option>
+                <option value="product">Product</option>
+                <option value="data">Data</option>
+                <option value="other">Other</option>
+            </select>
+
+            <select id="filter-type" class="form-control" style="width:160px;" onchange="filterJobs()">
+                <option value="">All Types</option>
+                <option value="full_time">Full Time</option>
+                <option value="part_time">Part Time</option>
+                <option value="contract">Contract</option>
+                <option value="internship">Internship</option>
+            </select>
+
+            <span id="job-count" class="text-muted text-sm"></span>
+        </div>
+
+        <!-- Two column layout: job list + detail panel -->
+        <div id="board-layout" class="flex gap-4" style="align-items:flex-start;">
+
+            <!-- Job list -->
+            <div id="job-list" style="flex:1; display:flex; flex-direction:column; gap:14px;">
+                <div class="empty-state">
+                    <div class="empty-icon">⏳</div>
+                    <p>Loading jobs...</p>
+                </div>
+            </div>
+
+            <!-- Job detail panel (hidden until a job is clicked) -->
+            <div id="job-detail" style="width:400px; display:none; position:sticky; top:84px;">
+            </div>
+
+        </div>
+    </div>
+</section>
+
+<!-- Apply Modal -->
+<div id="apply-modal" class="modal-backdrop" style="display:none;">
+    <div class="modal">
+        <div class="modal-header">
+            <h3 id="apply-modal-title">Apply for Job</h3>
+            <button class="btn btn-ghost btn-sm" onclick="closeApplyModal()">✕</button>
+        </div>
+        <div class="modal-body">
+
+            <div id="apply-step-1">
+                <div class="form-group">
+                    <label class="form-label">Your Resume *</label>
+                    <textarea
+                        id="resume-input"
+                        class="form-control"
+                        style="min-height:180px;"
+                        placeholder="Paste your full resume here. Our AI will analyze your skills and match them against the job requirements..."
+                    ></textarea>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Cover Letter (optional)</label>
+                    <textarea
+                        id="cover-input"
+                        class="form-control"
+                        placeholder="Why are you a great fit for this role?"
+                    ></textarea>
+                </div>
+                <div id="apply-alert" class="alert"></div>
+                <button
+                    id="apply-btn"
+                    class="btn btn-primary btn-full btn-lg"
+                    data-label="Analyze & Apply"
+                    onclick="submitApplication()"
+                >
+                    Analyze & Apply
+                </button>
+            </div>
+
+            <!-- AI result shown after submission -->
+            <div id="apply-step-2" style="display:none;">
+                <div class="flex items-center gap-4 mb-4">
+                    <div id="result-ring"></div>
+                    <div>
+                        <h3 id="result-verdict"></h3>
+                        <p id="result-summary" class="text-sm mt-1"></p>
+                    </div>
+                </div>
+
+                <div class="flex wrap gap-2 mb-4" id="result-skills"></div>
+
+                <div class="ai-box mb-4">
+                    <h4 class="mb-2">Strengths</h4>
+                    <ul id="result-strengths" style="padding-left:1.2rem; font-size:0.875rem; line-height:2;"></ul>
+                    <div class="divider"></div>
+                    <h4 class="mb-2">Gaps</h4>
+                    <ul id="result-gaps" style="padding-left:1.2rem; font-size:0.875rem; line-height:2;"></ul>
+                </div>
+
+                <button class="btn btn-success btn-full btn-lg" onclick="closeApplyModal()">
+                    ✓ Application Submitted!
+                </button>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<!-- Toast container -->
+<div class="toast-container" id="toast-container"></div>
+
+<script src="js/api.js"></script>
+<script src="js/jobs.js"></script>
+
+</body>
+</html>

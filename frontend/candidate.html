@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>HireAI — Candidate Dashboard</title>
+    <link rel="stylesheet" href="css/style.css"/>
+</head>
+<body>
+
+<nav class="navbar">
+    <a href="index.html" class="navbar-brand">Hire<span>AI</span></a>
+    <ul class="navbar-links">
+        <li><span id="nav-username" style="color:#94a3b8; font-size:0.875rem;"></span></li>
+        <li><a href="index.html" class="btn btn-ghost btn-sm">Browse Jobs</a></li>
+        <li><a href="#" id="nav-logout" class="btn btn-ghost btn-sm">Logout</a></li>
+    </ul>
+</nav>
+
+<div class="dashboard-layout">
+
+    <aside class="sidebar">
+        <div class="sidebar-section">Menu</div>
+        <a class="nav-link active" data-page="dashboard" onclick="showPage('dashboard')">
+            Dashboard
+        </a>
+        <a class="nav-link" data-page="my-applications" onclick="showPage('my-applications')">
+            My Applications
+        </a>
+    </aside>
+
+    <main class="dashboard-main">
+
+        <!-- ── Dashboard ── -->
+        <div id="page-dashboard">
+            <div class="page-header">
+                <h2>My Dashboard</h2>
+                <p>Track your job applications</p>
+            </div>
+            <div class="grid-4 mb-6" id="candidate-stats"></div>
+            <div class="card">
+                <div class="card-body">
+                    <h3 class="mb-4">Recent Applications</h3>
+                    <div id="candidate-recent"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ── My Applications ── -->
+        <div id="page-my-applications" style="display:none;">
+            <div class="page-header">
+                <h2>My Applications</h2>
+                <p>All jobs you've applied to</p>
+            </div>
+            <div id="candidate-apps-list" style="display:flex; flex-direction:column; gap:16px;"></div>
+        </div>
+
+    </main>
+</div>
+
+<div class="toast-container" id="toast-container"></div>
+
+<script src="js/api.js"></script>
+<script src="js/dashboard.js"></script>
+</body>
+</html>

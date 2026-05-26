@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>HireAI — Recruiter Dashboard</title>
+    <link rel="stylesheet" href="css/style.css"/>
+</head>
+<body>
+
+<nav class="navbar">
+    <a href="index.html" class="navbar-brand">Hire<span>AI</span></a>
+    <ul class="navbar-links">
+        <li><span id="nav-username" style="color:#94a3b8; font-size:0.875rem;"></span></li>
+        <li><a href="index.html" class="btn btn-ghost btn-sm">Browse Jobs</a></li>
+        <li><a href="#" id="nav-logout" class="btn btn-ghost btn-sm">Logout</a></li>
+    </ul>
+</nav>
+
+<div class="dashboard-layout">
+
+    <!-- Sidebar -->
+    <aside class="sidebar">
+        <div class="sidebar-section">Menu</div>
+        <a class="nav-link active" data-page="dashboard" onclick="showPage('dashboard')">
+            Dashboard
+        </a>
+        <a class="nav-link" data-page="post-job" onclick="showPage('post-job')">
+            Post a Job
+        </a>
+        <a class="nav-link" data-page="my-jobs" onclick="showPage('my-jobs')">
+            My Jobs
+        </a>
+        <a class="nav-link" data-page="applications" onclick="showPage('applications')">
+            Applications
+        </a>
+    </aside>
+
+    <!-- Main content -->
+    <main class="dashboard-main">
+
+        <!-- ── Dashboard Page ── -->
+        <div id="page-dashboard">
+            <div class="page-header">
+                <h2>Dashboard</h2>
+                <p>Your hiring pipeline at a glance</p>
+            </div>
+            <div class="grid-4 mb-6" id="stats-grid">
+                <!-- Stats injected by JS -->
+            </div>
+            <div class="grid-2">
+                <div class="card">
+                    <div class="card-body">
+                        <h3 class="mb-4">Recent Applications</h3>
+                        <div id="recent-apps-list"></div>
+                    </div>
+                </div>
+                <div class="card">
+                    <div class="card-body">
+                        <h3 class="mb-4">Match Score Breakdown</h3>
+                        <div id="score-breakdown"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ── Post Job Page ── -->
+        <div id="page-post-job" style="display:none;">
+            <div class="page-header">
+                <h2>Post a New Job</h2>
+                <p>Fill in the details below</p>
+            </div>
+            <div class="card" style="max-width:700px;">
+                <div class="card-body">
+                    <div id="post-job-alert" class="alert"></div>
+                    <div class="grid-2">
+                        <div class="form-group">
+                            <label class="form-label">Job Title *</label>
+                            <input id="job-title" class="form-control" placeholder="e.g. Senior React Developer"/>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Company *</label>
+                            <input id="job-company" class="form-control" placeholder="Company name"/>
+                        </div>
+                    </div>
+                    <div class="grid-2">
+                        <div class="form-group">
+                            <label class="form-label">Location</label>
+                            <input id="job-location" class="form-control" placeholder="e.g. Remote / NYC"/>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Salary Range</label>
+                            <input id="job-salary" class="form-control" placeholder="e.g. $120k–$160k"/>
+                        </div>
+                    </div>
+                    <div class="grid-2">
+                        <div class="form-group">
+                            <label class="form-label">Job Type</label>
+                            <select id="job-type" class="form-control">
+                                <option value="full_time">Full Time</option>
+                                <option value="part_time">Part Time</option>
+                                <option value="contract">Contract</option>
+                                <option value="internship">Internship</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Category</label>
+                            <select id="job-category" class="form-control">
+                                <option value="engineering">Engineering</option>
+                                <option value="design">Design</option>
+                                <option value="marketing">Marketing</option>
+                                <option value="ai_ml">AI / ML</option>
+                                <option value="product">Product</option>
+                                <option value="data">Data</option>
+                                <option value="other">Other</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Required Skills (comma separated)</label>
+                        <input id="job-skills" class="form-control" placeholder="Django, Python, PostgreSQL, REST API"/>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Job Description *</label>
+                        <textarea id="job-description" class="form-control" style="min-height:130px;"
+                            placeholder="Describe the role, responsibilities, and team..."></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Requirements</label>
+                        <textarea id="job-requirements" class="form-control"
+                            placeholder="Experience, education, certifications..."></textarea>
+                    </div>
+                    <button
+                        id="post-job-btn"
+                        class="btn btn-primary btn-lg"
+                        data-label="Post Job"
+                        onclick="postJob()"
+                    >
+                        Post Job
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- ── My Jobs Page ── -->
+        <div id="page-my-jobs" style="display:none;">
+            <div class="page-header flex justify-between items-center">
+                <div>
+                    <h2>My Jobs</h2>
+                    <p>All jobs you've posted</p>
+                </div>
+            </div>
+            <div id="my-jobs-list" style="display:flex; flex-direction:column; gap:14px;"></div>
+        </div>
+
+        <!-- ── Applications Page ── -->
+        <div id="page-applications" style="display:none;">
+            <div class="page-header">
+                <h2>Applications</h2>
+                <p>All candidates who applied to your jobs</p>
+            </div>
+            <div class="card">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Candidate</th>
+                            <th>Role</th>
+                            <th>AI Match</th>
+                            <th>Status</th>
+                            <th>Applied</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody id="applications-tbody">
+                        <tr><td colspan="6" class="text-center text-muted" style="padding:2rem;">Loading...</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+    </main>
+</div>
+
+<!-- Application detail modal -->
+<div id="app-detail-modal" class="modal-backdrop" style="display:none;">
+    <div class="modal">
+        <div class="modal-header">
+            <h3>Application Details</h3>
+            <button class="btn btn-ghost btn-sm" onclick="closeAppModal()">✕</button>
+        </div>
+        <div class="modal-body" id="app-detail-body"></div>
+    </div>
+</div>
+
+<div class="toast-container" id="toast-container"></div>
+
+<script src="js/api.js"></script>
+<script src="js/dashboard.js"></script>
+</body>
+</html>
