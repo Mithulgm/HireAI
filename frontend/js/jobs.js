@@ -1,14 +1,20 @@
 // js/jobs.js
 // Handles the job board page (index.html)
 
-let allJobs = [];
+let allJobs       = [];
+let currentPage   = 1;       // ← add
+let totalPages    = 1;       // ← add
 let selectedJobId = null;
 let applyingToJobId = null;
-
 // ── On page load ──────────────────────────────────────────────────
 document.addEventListener('DOMContentLoaded', async () => {
     setupNavbar();
-    await loadJobs();
+    await loadJobs(1);
+
+    // ← Add this so pressing Enter triggers search
+    document.getElementById('search-input').addEventListener('keydown', (e) => {
+        if (e.key === 'Enter') loadJobs(1);
+    });
 });
 
 // ── Navbar: show/hide links based on login state ──────────────────
@@ -32,11 +38,34 @@ function setupNavbar() {
 }
 
 // ── Load jobs from Django API ─────────────────────────────────────
-async function loadJobs() {
+
+async function loadJobs(page = 1) {
+    currentPage = page;
+
+    // Read current filter values from the DOM
+    const search   = document.getElementById('search-input').value.trim();
+    const category = document.getElementById('filter-category').value;
+    const job_type = document.getElementById('filter-type').value;
+
+    // Build filters — only send non-empty values
+    const filters = { page };
+    if (search)   filters.search   = search;
+    if (category) filters.category = category;
+    if (job_type) filters.job_type = job_type;
+
     try {
-        allJobs = await Jobs.list();
-        // Jobs.list() calls GET /api/jobs/ — no token needed
+        const data = await Jobs.list(filters);
+        // data is now { count, total_pages, current_page, next, previous, results }
+
+        allJobs    = data.results;   // ← jobs are inside .results now
+        totalPages = data.total_pages;
+
+        document.getElementById('job-count').textContent =
+            `${data.count} jobs found`;
+
         renderJobs(allJobs);
+        renderPagination(data);      // ← new: draw page buttons
+
     } catch (err) {
         document.getElementById('job-list').innerHTML = `
             <div class="empty-state">
@@ -45,26 +74,63 @@ async function loadJobs() {
             </div>`;
     }
 }
-
 // ── Filter jobs by search + dropdowns ────────────────────────────
+// AFTER — tells Django to filter, always goes back to page 1
 function filterJobs() {
-    const query    = document.getElementById('search-input').value.toLowerCase();
-    const category = document.getElementById('filter-category').value;
-    const type     = document.getElementById('filter-type').value;
+    loadJobs(1);
+    // loadJobs() reads the search/filter values itself
+    // and sends them to Django as query params
+    // Django filters, Django paginates, sends back results
+}
 
-    const filtered = allJobs.filter(job => {
-        const matchQ = !query ||
-            job.title.toLowerCase().includes(query) ||
-            job.company.toLowerCase().includes(query) ||
-            job.skills.some(s => s.toLowerCase().includes(query));
+ function renderPagination(data) {
+    // Remove existing pagination if it's there
+    const existing = document.getElementById('pagination');
+    if (existing) existing.remove();
 
-        const matchC = !category || job.category === category;
-        const matchT = !type     || job.job_type === type;
+    // Don't show pagination if there's only 1 page
+    if (data.total_pages <= 1) return;
 
-        return matchQ && matchC && matchT;
-    });
+    const nav = document.createElement('div');
+    nav.id = 'pagination';
+    nav.style.cssText = `
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: 8px;
+        margin-top: 24px;
+    `;
 
-    renderJobs(filtered);
+    // ← Previous button
+    const prevBtn = document.createElement('button');
+    prevBtn.className = 'btn btn-ghost btn-sm';
+    prevBtn.textContent = '← Prev';
+    prevBtn.disabled = !data.previous;
+    // disabled if there's no previous page (we're on page 1)
+    prevBtn.onclick = () => loadJobs(data.current_page - 1);
+    nav.appendChild(prevBtn);
+
+    // Page number buttons
+    for (let i = 1; i <= data.total_pages; i++) {
+        const btn = document.createElement('button');
+        btn.className = `btn btn-sm ${i === data.current_page ? 'btn-primary' : 'btn-ghost'}`;
+        // Current page gets btn-primary (filled), others get btn-ghost (outline)
+        btn.textContent = i;
+        btn.onclick = () => loadJobs(i);
+        nav.appendChild(btn);
+    }
+
+    // Next → button
+    const nextBtn = document.createElement('button');
+    nextBtn.className = 'btn btn-ghost btn-sm';
+    nextBtn.textContent = 'Next →';
+    nextBtn.disabled = !data.next;
+    // disabled if there's no next page (we're on the last page)
+    nextBtn.onclick = () => loadJobs(data.current_page + 1);
+    nav.appendChild(nextBtn);
+
+    // Insert pagination below the job list
+    document.getElementById('job-list').after(nav);
 }
 
 // ── Render job cards ──────────────────────────────────────────────
@@ -110,11 +176,16 @@ function renderJobs(jobs) {
                     : ''}
             </div>
 
+            // AFTER — adds applicant count on the right
             <div class="flex justify-between items-center mt-3">
-                <span class="badge badge-primary">${formatJobType(job.job_type)}</span>
-                <span class="badge badge-gray">${formatCategory(job.category)}</span>
+                 <div class="flex gap-2">
+                    <span class="badge badge-primary">${formatJobType(job.job_type)}</span>
+                    <span class="badge badge-gray">${formatCategory(job.category)}</span>
+                </div>
+                <span class="text-sm text-muted">
+                    ${job.application_count} applicant${job.application_count !== 1 ? 's' : ''}
+                </span>
             </div>
-        </div>
     `).join('');
 }
 

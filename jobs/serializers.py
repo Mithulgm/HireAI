@@ -13,6 +13,16 @@ class JobSerializer(serializers.ModelSerializer):
         # read_only=True → shown in responses but not required in requests
     )
 
+
+    application_count = serializers.IntegerField(
+        read_only=True,
+        default=0
+        # This field comes from our annotate() in the view
+        # read_only because it's computed, not stored
+        # default=0 handles cases where annotation isn't present
+        # e.g. when creating a job via POST
+    )
+
     class Meta:
         model = Job
         fields = [

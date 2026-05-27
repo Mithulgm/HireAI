@@ -221,7 +221,7 @@ async function loadMyJobs() {
                         </div>
                     </div>
                     <div style="text-align:right; flex-shrink:0;">
-                        <div style="font-weight:800; font-size:1.5rem;">${job.applications?.length ?? '—'}</div>
+                        <div style="font-weight:800; font-size:1.5rem;">${job.application_count ?? 0}</div>
                         <div class="text-sm text-muted">Applications</div>
                         <button class="btn btn-danger btn-sm mt-3"
                             onclick="deleteJob(${job.id})">Delete</button>

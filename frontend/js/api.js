@@ -200,3 +200,15 @@ const Applications = {
         });
     },
 };
+
+// js/api.js
+// ── Add this at the very bottom ───────────────────────────────────
+
+function sanitize(str) {
+    // Protects against XSS attacks
+    // Converts <script> to &lt;script&gt; so it displays as text, not code
+    if (!str) return '';
+    const div = document.createElement('div');
+    div.textContent = String(str);
+    return div.innerHTML;
+}

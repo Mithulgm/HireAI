@@ -81,14 +81,21 @@ CORS_ALLOWED_ORIGINS = [
 # Tells DRF: "by default, require JWT auth for all endpoints"
 # and "return JSON responses"
 
+# core/settings.py
+
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (
         'rest_framework_simplejwt.authentication.JWTAuthentication',
     ),
     'DEFAULT_PERMISSION_CLASSES': (
         'rest_framework.permissions.IsAuthenticated',
-        # Every view requires login UNLESS we explicitly say otherwise
     ),
+
+    # ── Add these two lines ───────────────────────────────────────
+    'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
+    'PAGE_SIZE': 5,
+    # Returns 5 jobs per page
+    # Frontend requests page 2 with ?page=2
 }
 
 
