@@ -199,8 +199,8 @@ async function loadMyJobs() {
     el.innerHTML = '<p class="text-muted">Loading...</p>';
 
     try {
-        const jobs = await Jobs.list();
-        const myJobs = jobs.filter(j => j.posted_by_username === user.username);
+        const data = await Jobs.list();
+        const myJobs = data.results.filter(j => j.posted_by_username === user.username);
 
         if (!myJobs.length) {
             el.innerHTML = `<div class="empty-state"><div class="empty-icon">💼</div><p>No jobs posted yet.</p></div>`;

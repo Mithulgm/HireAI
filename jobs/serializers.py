@@ -39,9 +39,14 @@ class JobSerializer(serializers.ModelSerializer):
             'is_active',
             'created_at',
             'posted_by_username',
+            'application_count',    # ← add this line
+    ]
+        read_only_fields = [
+            'id',
+            'created_at',
+            'posted_by_username',
+            'application_count',    # ← and this line
         ]
-        read_only_fields = ['id', 'created_at', 'posted_by_username']
-        # These fields are set by the server, not the client
 
     def validate_skills(self, value):
         # value is whatever the client sent for 'skills'

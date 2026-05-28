@@ -267,6 +267,7 @@ textarea.form-control {
     padding: 1.25rem;
     cursor: pointer;
     transition: all .2s;
+    margin-bottom: 14px;    
 }
 
 .job-card:hover {

@@ -136,9 +136,8 @@ function filterJobs() {
 // ── Render job cards ──────────────────────────────────────────────
 function renderJobs(jobs) {
     const list = document.getElementById('job-list');
-    document.getElementById('job-count').textContent = `${jobs.length} jobs found`;
 
-    if (jobs.length === 0) {
+    if (!jobs.length) {
         list.innerHTML = `
             <div class="empty-state">
                 <div class="empty-icon">🔍</div>
@@ -147,38 +146,37 @@ function renderJobs(jobs) {
         return;
     }
 
-    list.innerHTML = jobs.map(job => `
-        <div
-            class="job-card ${selectedJobId === job.id ? 'active' : ''}"
-            onclick="selectJob(${job.id})"
-        >
+    // Build each card separately then join
+    const cards = jobs.map(job => {
+        const skillChips = job.skills.slice(0, 4)
+            .map(s => `<span class="chip">${sanitize(s)}</span>`)
+            .join('');
+
+        const extraSkills = job.skills.length > 4
+            ? `<span class="badge badge-gray">+${job.skills.length - 4}</span>`
+            : '';
+
+        const isActive = selectedJobId === job.id ? 'active' : '';
+
+        return `<div class="job-card ${isActive}" onclick="selectJob(${job.id})">
             <div class="flex justify-between items-center">
                 <div>
-                    <h4>${job.title}</h4>
-                    <p class="text-sm text-muted mt-1">
-                        ${job.company} · ${job.location}
-                    </p>
+                    <h4>${sanitize(job.title)}</h4>
+                    <p class="text-sm text-muted mt-1">${sanitize(job.company)} · ${sanitize(job.location)}</p>
                 </div>
                 <div style="text-align:right;">
                     <div style="font-weight:700; color:var(--primary); font-size:0.9rem;">
-                        ${job.salary || 'Salary TBD'}
+                        ${sanitize(job.salary || 'Salary TBD')}
                     </div>
                     <div class="text-sm text-muted">${formatDate(job.created_at)}</div>
                 </div>
             </div>
-
             <div class="flex wrap gap-1 mt-3">
-                ${job.skills.slice(0, 4).map(s =>
-                    `<span class="chip">${s}</span>`
-                ).join('')}
-                ${job.skills.length > 4
-                    ? `<span class="badge badge-gray">+${job.skills.length - 4}</span>`
-                    : ''}
+                ${skillChips}
+                ${extraSkills}
             </div>
-
-            // AFTER — adds applicant count on the right
             <div class="flex justify-between items-center mt-3">
-                 <div class="flex gap-2">
+                <div class="flex gap-2">
                     <span class="badge badge-primary">${formatJobType(job.job_type)}</span>
                     <span class="badge badge-gray">${formatCategory(job.category)}</span>
                 </div>
@@ -186,7 +184,10 @@ function renderJobs(jobs) {
                     ${job.application_count} applicant${job.application_count !== 1 ? 's' : ''}
                 </span>
             </div>
-    `).join('');
+        </div>`;
+    });
+
+    list.innerHTML = cards.join('');
 }
 
 // ── Show job detail panel ─────────────────────────────────────────
