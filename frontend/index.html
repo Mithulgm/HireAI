@@ -72,15 +72,14 @@
         <!-- Two column layout: job list + detail panel -->
         <div id="board-layout" class="flex gap-4" style="align-items:flex-start;">
 
-            <!-- Job list -->
-            <div id="job-list" style="flex:1; display:flex; flex-direction:column; gap:14px;">
-                <div class="empty-state">
-                    <div class="empty-icon">⏳</div>
-                    <p>Loading jobs...</p>
+            <!-- Left column: job list + pagination -->
+            <div style="flex:1; display:flex; flex-direction:column;">
+                <div id="job-list" style="display:flex; flex-direction:column; gap:14px;">
                 </div>
+                <!-- Pagination will be injected here by renderPagination() -->
             </div>
 
-            <!-- Job detail panel (hidden until a job is clicked) -->
+            <!-- Job detail panel -->
             <div id="job-detail" style="width:400px; display:none; position:sticky; top:84px;">
             </div>
 

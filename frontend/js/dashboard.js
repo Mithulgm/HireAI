@@ -55,19 +55,26 @@ function showPage(pageId) {
 
 async function loadRecruiterDashboard() {
     try {
-        const [jobs, apps] = await Promise.all([
+        const [jobsData, apps] = await Promise.all([
             Jobs.list(),
             Applications.list(),
         ]);
-        // Promise.all runs both requests in parallel — faster than sequential
 
-        // Filter to only this recruiter's jobs
+        const jobs = jobsData.results || jobsData;
+
+        // Alice's jobs only
         const myJobs = jobs.filter(j => j.posted_by_username === user.username);
-        const myApps = apps;
 
-        renderRecruiterStats(myJobs, myApps);
-        renderRecentApps(myApps);
-        renderScoreBreakdown(myApps);
+        // ── Fix: only show applications for alice's jobs ──────────
+        const myJobIds = myJobs.map(j => j.id);
+        // [1, 2, 3] — IDs of jobs alice posted
+
+        const myApps = apps.filter(a => myJobIds.includes(a.job));
+        // Keep only applications where job ID is in alice's job list
+
+        renderRecruiterStats(myJobs, myApps);   // ← myApps not apps
+        renderRecentApps(myApps);               // ← myApps not apps
+        renderScoreBreakdown(myApps);           // ← myApps not apps
 
     } catch (err) {
         console.error('Dashboard load error:', err);
@@ -199,11 +206,15 @@ async function loadMyJobs() {
     el.innerHTML = '<p class="text-muted">Loading...</p>';
 
     try {
-        const data = await Jobs.list();
-        const myJobs = data.results.filter(j => j.posted_by_username === user.username);
+        const jobsData = await Jobs.list();
+        const jobs = jobsData.results || jobsData;  // ← fix this line
+        const myJobs = jobs.filter(j => j.posted_by_username === user.username);
 
         if (!myJobs.length) {
-            el.innerHTML = `<div class="empty-state"><div class="empty-icon">💼</div><p>No jobs posted yet.</p></div>`;
+            el.innerHTML = `<div class="empty-state">
+                <div class="empty-icon">💼</div>
+                <p>No jobs posted yet.</p>
+            </div>`;
             return;
         }
 
